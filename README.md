@@ -66,8 +66,6 @@ The assistant supports true personalization by working directly from the **KTP (
 
 ## Demo / Screenshots
 
-> Add images or GIFs in a `/docs` folder and link them here.
-
 Examples:
 - KTP upload / parsing
 - Student profile table (level, score, points)
@@ -84,21 +82,6 @@ Examples:
   - HTTP API calls to LLMs or content services
   - Webhooks for teacher uploads and events
 
-> Update this section with the exact services you use (Sheets/DB/LLM provider, hosting, etc.).
-
----
-
-## Repository Structure (suggested)
-
-```
-/workflows        # exported n8n workflows (JSON)
-/docs             # screenshots, diagrams
-/scripts          # helper scripts (optional)
-/data             # example KTP files (sanitized)
-README.md
-```
-
----
 
 ## Getting Started
 
@@ -116,7 +99,7 @@ README.md
 3. Run n8n and start the Telegram bot
 4. Upload a KTP and test the student diagnostic flow
 
-> Add exact step-by-step instructions once your workflow is final and exported.
+
 
 ---
 
@@ -128,21 +111,3 @@ README.md
 - Stronger evaluation & tracking (mastery model)
 - Safer content filters + plagiarism/cheating protection
 
----
-
-## Contributing
-
-If you want to contribute:
-- Open an issue with an idea or bug report
-- Propose a PR with improvements (workflows, docs, integrations)
-
----
-
-## License
-
-Choose one:
-- MIT (simple and permissive)
-- Apache-2.0 (good for projects with patents/industry use)
-- Proprietary (if you don’t want reuse)
-
-> Add a `LICENSE` file after you decide.
