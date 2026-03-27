@@ -1,0 +1,737 @@
+{
+  "name": "DigiEduHack Aqtobe 2025",
+  "nodes": [
+    {
+      "parameters": {
+        "updates": [
+          "message"
+        ],
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegramTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -128,
+        144
+      ],
+      "id": "d5c7545f-a794-41d4-bef1-5c75f75da614",
+      "name": "Telegram Trigger",
+      "webhookId": "579f72ef-2f6d-4bef-826d-7d4fcdf7e485",
+      "credentials": {
+        "telegramApi": {
+          "id": "ggBTZFvg3VC80aTG",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.message.text }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "string",
+                      "operation": "notEmpty",
+                      "singleValue": true
+                    },
+                    "id": "68c65bb3-a1ff-4351-8e30-d4f706182314"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": "={{ true }}",
+              "outputKey": "text"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "69312be7-b2f8-416c-b3cb-d6439831a651",
+                    "leftValue": "={{ $json.message.voice.mime_type }}",
+                    "rightValue": "audio/ogg",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "audio"
+            }
+          ]
+        },
+        "options": {
+          "fallbackOutput": "extra"
+        }
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.3,
+      "position": [
+        96,
+        128
+      ],
+      "id": "ce13f732-738a-4f36-b840-9f4529ed677c",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "c1e1d5d4-226b-464c-9ea4-2851789931a6",
+              "leftValue": "={{ $json.message.text }}",
+              "rightValue": "/start",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [
+        320,
+        -48
+      ],
+      "id": "06b15e21-2931-4d2a-a143-75a27b0be6b1",
+      "name": "If"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "=Добро пожаловать на наш бот!",
+        "additionalFields": {
+          "appendAttribution": false
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        496,
+        -208
+      ],
+      "id": "07e3cf5f-d043-40b9-b36f-f17f4e25ffa2",
+      "name": "Send a text message",
+      "webhookId": "ede07200-0064-4c3a-82a9-f21e7d780058",
+      "credentials": {
+        "telegramApi": {
+          "id": "ggBTZFvg3VC80aTG",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "file",
+        "fileId": "={{ $json.message.voice.file_id }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        320,
+        144
+      ],
+      "id": "8bb1d5da-da70-4513-9457-526030cc9f44",
+      "name": "Get a file",
+      "webhookId": "43094142-119b-4224-8cd0-a22e17a8b843",
+      "credentials": {
+        "telegramApi": {
+          "id": "ggBTZFvg3VC80aTG",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "audio",
+        "modelId": {
+          "__rl": true,
+          "value": "models/gemini-2.5-flash",
+          "mode": "list",
+          "cachedResultName": "models/gemini-2.5-flash"
+        },
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.googleGemini",
+      "typeVersion": 1,
+      "position": [
+        544,
+        144
+      ],
+      "id": "b00ad550-987e-4f7d-a2b3-c74e91b0f510",
+      "name": "Transcribe a recording",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "059uPejb1yJW2KGF",
+          "name": "Google Gemini(PaLM) Api account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "b8fc2e9f-4771-4535-b85a-c00f6c0244ab",
+              "name": "text",
+              "value": "={{ $json.message.text }}",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        496,
+        -32
+      ],
+      "id": "ac923c5a-453b-4bd3-b97f-abe0d8f0f8a0",
+      "name": "Edit Fields"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        784,
+        80
+      ],
+      "id": "4fe54a39-4774-4be4-b2aa-4dbc38e644b6",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "={{ $json.output }}",
+        "additionalFields": {
+          "appendAttribution": false,
+          "parse_mode": "HTML"
+        }
+      },
+      "type": "n8n-nodes-base.telegram",
+      "typeVersion": 1.2,
+      "position": [
+        1488,
+        64
+      ],
+      "id": "936c94e6-cca6-4658-8fe1-afcba9a2f1c0",
+      "name": "Send a text message1",
+      "webhookId": "44ef8dc2-700c-4e18-8cbb-95fa799028e0",
+      "credentials": {
+        "telegramApi": {
+          "id": "ggBTZFvg3VC80aTG",
+          "name": "Telegram account 2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "This tool returns the school math curriculum from Google Docs.\nUse it to answer questions about the program, quarters, or future topics.\n",
+        "operation": "get",
+        "documentURL": "https://docs.google.com/document/d/1whvzhrVQ8YyPpRraZKTsxBOSP4aV44anoYsN_O7OP4w/edit?tab=t.0"
+      },
+      "type": "n8n-nodes-base.googleDocsTool",
+      "typeVersion": 2,
+      "position": [
+        1760,
+        304
+      ],
+      "id": "b807e72b-053f-4660-aba2-0d871770575b",
+      "name": "Get a document in Google Docs",
+      "credentials": {
+        "googleDocsOAuth2Api": {
+          "id": "httl3q5vXOjc5P5i",
+          "name": "Google Docs account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "This tool finds a student's profile in Google Sheets by telegram_id.\nIt returns: name, learning_style, last_score, level, points, teachers comment.\nUse this tool whenever you need information about the student.\n",
+        "documentId": {
+          "__rl": true,
+          "value": "1iT_FwtoSDi4tHB3UDwi1uP5PtW6J-dxi0sgOSDXnmLk",
+          "mode": "list",
+          "cachedResultName": "DigiEduHack Aqtobe 2025",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1iT_FwtoSDi4tHB3UDwi1uP5PtW6J-dxi0sgOSDXnmLk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "students",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1iT_FwtoSDi4tHB3UDwi1uP5PtW6J-dxi0sgOSDXnmLk/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "telegram_id",
+              "lookupValue": "={{ $('Telegram Trigger').item.json.message.chat.id }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        1600,
+        304
+      ],
+      "id": "75804026-5823-444e-99bb-5725e263a98c",
+      "name": "Lookup Student",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "htyUEdQHoidqdOZB",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "This tool loads math tasks from the “Tasks” sheet.\nTasks include: topic, difficulty, question, answer, points.\nThis tool is already filtered by student level, so it returns only suitable tasks.\nUse this tool when you need to choose a task for the student.\n",
+        "documentId": {
+          "__rl": true,
+          "value": "1iT_FwtoSDi4tHB3UDwi1uP5PtW6J-dxi0sgOSDXnmLk",
+          "mode": "list",
+          "cachedResultName": "DigiEduHack Aqtobe 2025",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1iT_FwtoSDi4tHB3UDwi1uP5PtW6J-dxi0sgOSDXnmLk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": 1649595130,
+          "mode": "list",
+          "cachedResultName": "Tasks",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1iT_FwtoSDi4tHB3UDwi1uP5PtW6J-dxi0sgOSDXnmLk/edit#gid=1649595130"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        1440,
+        304
+      ],
+      "id": "0dc4775f-e434-4039-aa36-f98c208a4236",
+      "name": "Get Tasks",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "htyUEdQHoidqdOZB",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "descriptionType": "manual",
+        "toolDescription": "This tool updates the student row in Google Sheets.\nUse it only to change the student's points field.\nFormat:\npoints = new_points_value\n",
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1iT_FwtoSDi4tHB3UDwi1uP5PtW6J-dxi0sgOSDXnmLk",
+          "mode": "list",
+          "cachedResultName": "DigiEduHack Aqtobe 2025",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1iT_FwtoSDi4tHB3UDwi1uP5PtW6J-dxi0sgOSDXnmLk/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "students",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1iT_FwtoSDi4tHB3UDwi1uP5PtW6J-dxi0sgOSDXnmLk/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "telegram_id": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+            "points": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('points', ``, 'string') }}",
+            "Solved_Tasks": "={{ /*n8n-auto-generated-fromAI-override*/ $fromAI('Solved_Tasks', `здесь нужно вставить номера задач на которые ученик правильно ответил из таблицы tasks. То есть task number`, 'string') }}"
+          },
+          "matchingColumns": [
+            "telegram_id"
+          ],
+          "schema": [
+            {
+              "id": "telegram_id",
+              "displayName": "telegram_id",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "name",
+              "displayName": "name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "learning_style",
+              "displayName": "learning_style",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "last_score",
+              "displayName": "last_score",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "level",
+              "displayName": "level",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "points",
+              "displayName": "points",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "teachers comment",
+              "displayName": "teachers comment",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Solved_Tasks",
+              "displayName": "Solved_Tasks",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {
+          "cellFormat": "USER_ENTERED"
+        }
+      },
+      "type": "n8n-nodes-base.googleSheetsTool",
+      "typeVersion": 4.7,
+      "position": [
+        1312,
+        320
+      ],
+      "id": "680f10eb-537f-4203-bf63-302979f8c6e9",
+      "name": "update_progress",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "htyUEdQHoidqdOZB",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.text }}",
+        "options": {
+          "systemMessage": "ROLE\nYou are an AI math tutor inside n8n.\nYour job is to teach the student individually:\nexplain → give tasks → check answers → avoid repeats → update progress → keep motivation high.\nYour tone is short, friendly, modern, supportive, human-like.\nCONTEXT\nStudents text you in Telegram (or via audio already transcribed).\nYou can only use:\nLookup Student\nGet Tasks\nupdate_progress\nGet Document\nMemory Tool\nYour LLM\nAll tasks are in Google Sheets and contain a Task_Number.\nEach student has a Solved_Tasks column (CSV list of solved task numbers).\nYou must never reveal tools, code, JSON, or internal system details.\nLast assigned task is stored in Memory as:\nlast_task_question, last_task_answer, last_task_points, last_task_number.\nGOAL\nUnderstand the student’s intent →\nexplain first when asked →\nselect a NEW task the student has never solved before →\ncheck answers →\nimmediately update progress →\nsave solved tasks →\nsupport and motivate the student.\nINPUT AVAILABLE\nFrom Lookup Student:\nname, level, points, Solved_Tasks, learning_style, etc.\nFrom Get Tasks:\nEach row includes:\ntopic, difficulty, question, answer, points, Task_Number.\nMemory:\nlast_task_question, last_task_answer, last_task_points, last_task_number.\nHOW YOU MUST WORK\n1. INTENT DETECTION (STRICT PRIORITY)\nBefore answering, detect the student's intent:\nIntent priority:\nIf they ask to explain → you must explain BEFORE giving any task.\nIf they send an answer → check it and update progress.\nIf they ask for a new task → choose a new one they haven't solved.\nIf unclear → ask a simple clarifying question.\nThis priority is mandatory.\n2. EXPLAINING THEORY (UPDATED)\nIf the student asks something like:\n\"explain\", \"я не понял тему\", \"я не понял формулы\", \"what is ...\", etc.:\nDo NOT give a task yet.\nIf needed → use Get Document to fetch the topic.\nExplain the topic simply, briefly, clearly.\nGive one tiny example.\nAsk:\n“Хочешь попробовать задачку по этой теме?”\nOnly if the student agrees → go to task selection.\nNever skip explanation.\nNever jump to tasks before explanation.\n3. SELECTING A NEW TASK (ANTI-REPEAT LOGIC)\nWhen the student asks for a task:\nUse Lookup Student → get:\nlevel (Low / Medium / Advanced)\nSolved_Tasks (CSV list of numbers)\nUse Get Tasks → filter tasks:\ndifficulty = student’s level\nTask_Number NOT in Solved_Tasks\n→ these are tasks the student has not solved yet\nChoose the first suitable new task.\nSave to Memory:\nlast_task_question\nlast_task_answer\nlast_task_points\nlast_task_number\nSend ONLY the question text — short, friendly, supportive.\nDo NOT reveal any tool output or technical info.\n4. CHECKING AN ANSWER (UPDATED — MANDATORY)\nIf the student sends an answer:\nCompare with last_task_answer.\nAccept equivalent forms, like 1/4 = 0.25.\nIf correct:\nYou MUST:\nImmediately call update_progress and add last_task_points.\nAdd last_task_number to the student’s Solved_Tasks.\nCongratulate briefly (1–2 sentences).\nGive a short explanation why it's correct.\nAsk if they want another (new) task.\nIf incorrect:\nDo NOT remove points.\nGive a short hint.\nEncourage another try.\nIf Memory is empty → ask the student to request a task.\nSTYLE\nshort\nfriendly\nmodern\nsupportive\nclear\nadapted to student’s level\nplain text only\nsimple lists allowed\nno academic lectures\nNO system or technical details EVER\nANSWER FORMAT\nPlain text only.\nNo JSON.\nNo tool names.\nNo “Used tools”.\nNo row numbers.\nNo system comments.\nSpeak like a real human tutor.\nLANGUAGE RULES\nDefault: Russian\nIf the student writes in Kazakh → reply in Kazakh.\nSwitch automatically based on the student’s message.\nSTRICTLY PROHIBITED\nYou must NEVER:\nReveal tools, tool outputs, inputs, JSON, node names, n8n, Memory keys\nGenerate messages like “Used tools:…”, “Result:…”, etc.\nInvent tasks or answers\nInvent points\nGive a task before explaining requested theory\nGive tasks that the student has already solved\nForget to add the solved task to Solved_Tasks\nForget to call update_progress after a correct answer\nProduce long academic explanations\nShow sheet data or row numbers\nIf you start generating technical info — STOP and rewrite your answer normally.\nFINAL CHECKLIST (UPDATED)\nBefore sending the reply, ensure:\nDid you detect the correct intent?\nIf they asked for theory → did you explain first?\nIf they asked for a task → did you filter solved tasks properly?\nDid you save the new task to Memory?\nDid you avoid repeats?\nIf answer was correct → did you update progress AND update Solved_Tasks?\nIs your explanation short, friendly, clear?\nDid you avoid all technical details?\nADDITIONAL RESOURCES\nTasks → Google Sheets\nSolved history → Students sheet\nTheory → Google Docs"
+        }
+      },
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 3,
+      "position": [
+        1072,
+        80
+      ],
+      "id": "ae2fd753-0e4e-4a50-a824-7ef817dd0b47",
+      "name": "AI Agent"
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $('Telegram Trigger').item.json.message.from.id }}"
+      },
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        1088,
+        288
+      ],
+      "id": "f8c76d16-b18d-4712-ba8d-5cbb1dbf4399",
+      "name": "Simple Memory"
+    },
+    {
+      "parameters": {
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatGoogleGemini",
+      "typeVersion": 1,
+      "position": [
+        912,
+        304
+      ],
+      "id": "b22f21f5-1798-4557-a4f4-4f412723485f",
+      "name": "Google Gemini Chat Model",
+      "credentials": {
+        "googlePalmApi": {
+          "id": "yox5ZH8tPUE60z2z",
+          "name": "Google Gemini(PaLM) Api account 2"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "If",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Get a file",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "If": {
+      "main": [
+        [
+          {
+            "node": "Send a text message",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Edit Fields",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a file": {
+      "main": [
+        [
+          {
+            "node": "Transcribe a recording",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Edit Fields": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Transcribe a recording": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get a document in Google Docs": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Lookup Student": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get Tasks": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "update_progress": {
+      "ai_tool": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_tool",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "AI Agent": {
+      "main": [
+        [
+          {
+            "node": "Send a text message1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Simple Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Gemini Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "533597be-7441-4f2b-a31d-7c7e576c1b9c",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "cd48630486ef24662a2d7be86d4ce7ea529f58a0ef2d510c8a3ae3e6d6ae5e74"
+  },
+  "id": "yz67zGuVzPa3gdox",
+  "tags": []
+}
