@@ -64,8 +64,8 @@ The assistant supports true personalization by working directly from the **KTP (
 
 ---
 
-## Demo / Screenshots
-
+## Demo
+https://youtu.be/IiS8l0zz_Hc
 Examples:
 - KTP upload / parsing
 - Student profile table (level, score, points)
@@ -91,7 +91,7 @@ Examples:
 - Storage for student data (Google Sheets / DB / Airtable — depending on your workflow)
 
 ### 2) Setup (high level)
-1. Import workflows from `/workflows` into n8n
+1. Import workflows(n8n file json)
 2. Add environment variables / credentials:
    - Telegram Bot token
    - Database / Sheets credentials
